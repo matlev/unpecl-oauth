@@ -144,7 +144,7 @@ class OAuth
 		$oauthParams = array(
 			'oauth_consumer_key' => $this->consumer_key,
 			'oauth_signature_method' => $this->signature_method,
-			'oauth_nonce' => $this->nonce ?: uniqid().'.'.time(),
+			'oauth_nonce' => $this->nonce ?: uniqid(), //.'.'.time(),
 			'oauth_timestamp' => $this->timestamp ?: time(),
 			'oauth_version' => $this->oauthVersion,
 		);
@@ -376,6 +376,8 @@ class OAuth
 	{
 		$signatureBase = $this->oauth_get_sbs($http_method, $url, $signParams);
 		$secretKeys = $this->consumer_secret.'&'.$this->token_secret;
+
+		watchdog('pecl-oauth', "Signature base: " . print_r($signatureBase, TRUE));
 
 		$rawSignature = null;
 		switch ($this->signature_method) {

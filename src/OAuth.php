@@ -131,7 +131,9 @@ class OAuth
 		$queryStr = parse_url($protected_resource_url, PHP_URL_QUERY);
 		parse_str($queryStr, $queryParams);
 		$normalizedUrl = preg_replace('/\?.*/', '', $protected_resource_url);
+		watchdog('pecl-oauth', 'Normalized URL: ' . print_r($normalizedUrl, TRUE));
 
+		// Unused?
 		$signatureKeys = array(
 			'consumer_key' => $this->consumer_key,
 			'shared_secret' => $this->consumer_secret,
@@ -146,17 +148,20 @@ class OAuth
 			'oauth_timestamp' => $this->timestamp ?: time(),
 			'oauth_version' => $this->oauthVersion,
 		);
+
 		if (!empty($this->token)) {
 			$oauthParams['oauth_token'] = $this->token;
 		}
+
 		$oauthParams = array_merge($oauthParams, $oauth_args);
 		$signParams = array_merge($queryParams, is_array($extra_parameters) ? $extra_parameters : array(), $oauthParams);
 
 		$signature = $this->_generateSignature($http_method, $normalizedUrl, $signParams);
+		watchdog('pecl-oauth', "Signature: " . print_r($signature, TRUE));
+
 		if ($flags & self::FETCH_SIGONLY) {
 			return $signature;
 		}
-
 
 		$requestParams = $extra_parameters;
 		switch ($this->auth_type) {
@@ -181,10 +186,13 @@ class OAuth
 				break;
 		}
 
+		// Why aren't we using the normalized url?
 		$url = $protected_resource_url;
 		if (!empty($requestParams) && is_array($requestParams) && empty($queryParams)) {
 			$url .= '?' . http_build_query($requestParams);
 		}
+		watchdog('pecl-oauth', 'Request Parameters: ' . print_r($requestParams, TRUE));
+		watchdog('pecl-oauth', 'URL for CURL: ' . print_r($url, TRUE));
 
 		$curlHeaders = array();
 		foreach ($http_headers as $name => $value) {
@@ -216,6 +224,7 @@ class OAuth
 		} elseif (is_array($extra_parameters) && !empty($extra_parameters)) {
 			$curlOptions[CURLOPT_POSTFIELDS] = $this->http_build_query($extra_parameters);
 		}
+		watchdog('pecl-oauth', "CURL options: " . print_r($curlOptions, TRUE));
 
 		$this->lastHeader = false;
 		list($this->lastResponse, $this->lastResponseInfo) = $this->execCurl($url, $curlOptions);

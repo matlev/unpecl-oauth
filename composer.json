@@ -1,12 +1,12 @@
 {
-	"name": "vclayton/unpecl-oauth",
+	"name": "matlev/unpecl-oauth",
 	"description": "Native PHP drop-in replacement for the PECL OAuth extension",
 	"type": "library",
 	"keywords": ["pecl", "oauth"],
-	"homepage": "https://github.com/vclayton/unpecl-oauth",
+	"homepage": "https://github.com/matlev/unpecl-oauth",
 	"license": "MIT",
 	"support": {
-		"issues": "https://github.com/vclayton/unpecl-oauth/issues"
+		"issues": "https://github.com/matlev/unpecl-oauth/issues"
 	},
 	"autoload": {
 		"psr-0": {"": "src/"},

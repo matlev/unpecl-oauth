@@ -280,6 +280,8 @@ class OAuth
 			$params['oauth_verifier'] = $verifier_token;
 		}
 		$headers = ($this->requestEngine !== OAUTH_REQENGINE_CURL) ? array('Connection' => 'close') : array();
+		$headers['Content-Length'] = 0;
+
 		$this->fetch($access_token_url, array(), $http_method, $headers, $params);
 		$response = $this->getLastResponse();
 		parse_str($response, $result);
